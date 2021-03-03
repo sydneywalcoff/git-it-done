@@ -1,5 +1,19 @@
 const issueContainerEl = document.querySelector("#issues-container");
 const limitWarningEl = document.querySelector("#limit-warning");
+const repoNameEl = document.querySelector("#repo-name");
+
+const getRepoName = function() {
+    let queryString= document.location.search;
+    let repoName = queryString.split("=")[1];
+
+    if(repoName) {
+        getRepoIssues(repoName);
+        repoNameEl.textContent = repoName; 
+    } else {
+        location.replace("./index.html");
+    }
+
+};
 
 const getRepoIssues = function(repo) {
     // console.log(repo)
@@ -11,12 +25,12 @@ const getRepoIssues = function(repo) {
                 displayIssues(data);
 
                 // check if api has paginated issues
-                if(displayWarning(repo)) {
-                    console.log("repo has more than 30 issues");
+                if(response.headers.get("Link")) {
+                    displayWarning(repo);
                 }
             });
         } else {
-            alert("There was a problem with your request!");
+            location.replace("./index.html");
         }
     });
 };
@@ -57,12 +71,9 @@ const displayIssues = function(issues) {
 };
 
 const displayWarning = function(repo) {
-    // add text to warning container
-    limitWarningEl.textContent = "To see more than 30 issues, visit ";
-    
     // add link element
     let linkEl = document.createElement("a");
-    linkEl.textContent = "Github.com";
+    linkEl.textContent = "See more than 30 issues at Github.com";
     linkEl.setAttribute("href", "https://github.com/" + repo + "/issues");
     linkEl.setAttribute("target", "_blank");
 
@@ -70,4 +81,5 @@ const displayWarning = function(repo) {
     limitWarningEl.appendChild(linkEl);
 };
 
-getRepoIssues("facebook/react");
+
+getRepoName();

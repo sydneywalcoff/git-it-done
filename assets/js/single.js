@@ -16,6 +16,9 @@ const getRepoIssues = function(repo) {
 };
 
 const displayIssues = function(issues) {
+    if(issues.length === 0) {
+        issueContainerEl.textContent = "This repo has no open issues!";
+    }
     for (let i =0; i <issues.length; i++) {
         // create <a> element to take users to the issue on github
         let issueEl = document.createElement("a");
